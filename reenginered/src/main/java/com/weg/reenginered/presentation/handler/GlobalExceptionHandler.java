@@ -1,8 +1,7 @@
-package com.weg.reenginered.exception;
+package com.weg.reenginered.presentation.handler;
 
-import com.weg.reenginered.domain.dto.response.ErrorResponseDTO;
 
-import jakarta.validation.ConstraintDeclarationException;
+import com.weg.reenginered.presentation.dto.response.ErrorResponseDTO;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -32,7 +31,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(DataIntegrityViolationException ex) {
-        // Geralmente usado para duplicidade de registros ou violação de constraints de banco
         return buildResponse(HttpStatus.CONFLICT, "Conflito de integridade: o registro já existe ou viola regras de negócio.", null);
     }
 
