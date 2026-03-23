@@ -1,6 +1,6 @@
 package com.weg.reenginered.application.facade.user;
 
-import com.weg.reenginered.application.mapper.UserMapper;
+import com.weg.reenginered.application.mapper.user.UserMapper;
 import com.weg.reenginered.application.usecase.user.*;
 import com.weg.reenginered.domain.dto.filter.UserFilter;
 import com.weg.reenginered.domain.entity.User;
