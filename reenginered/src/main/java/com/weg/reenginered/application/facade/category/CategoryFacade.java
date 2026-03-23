@@ -1,10 +1,7 @@
 package com.weg.reenginered.application.facade.category;
 
 import com.weg.reenginered.application.mapper.category.CategoryMapper;
-import com.weg.reenginered.application.usecase.category.DeleteCategoryByIdUseCase;
-import com.weg.reenginered.application.usecase.category.FindCategoryByIdUseCase;
-import com.weg.reenginered.application.usecase.category.FindCategoryUseCase;
-import com.weg.reenginered.application.usecase.category.SaveCategoryUseCase;
+import com.weg.reenginered.application.usecase.category.*;
 import com.weg.reenginered.domain.dto.filter.CategoryFilter;
 import com.weg.reenginered.domain.entity.Category;
 import com.weg.reenginered.presentation.dto.request.CategoryRequestDTO;
@@ -22,6 +19,7 @@ public class CategoryFacade implements CategoryFacadePort{
     private final FindCategoryByIdUseCase findById;
     private final FindCategoryUseCase findAll;
     private final DeleteCategoryByIdUseCase deleteById;
+    private final UpdateCategoryUseCase update;
     private final CategoryMapper mapper;
 
     @Override
@@ -45,7 +43,7 @@ public class CategoryFacade implements CategoryFacadePort{
 
     @Override
     public CategoryResponseDTO update(CategoryRequestDTO category, Long id) {
-        return null;
+        return mapper.toResponse(update.execute(mapper.toEntity(category), id));
     }
 
     @Override

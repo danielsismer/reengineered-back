@@ -7,9 +7,11 @@ import com.weg.reenginered.domain.exception.category.CategoryNotFound;
 import com.weg.reenginered.domain.port.CategoryPort;
 import com.weg.reenginered.infrastructure.persistence.category.spec.CategorySpec;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class CategoryRepositoryAdapter implements CategoryPort {
 
@@ -39,7 +41,14 @@ public class CategoryRepositoryAdapter implements CategoryPort {
 
     @Override
     public Category update(Category category, Long id) {
-        return null;
+
+        CategoryJpa categoryJpa = repository.findById(id)
+                .orElseThrow(() -> new CategoryNotFound(id));
+
+        categoryJpa.setName(category.getName());
+
+        return categoryMapper.toEntity(repository.save(categoryJpa));
+
     }
 
     @Override

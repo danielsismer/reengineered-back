@@ -36,7 +36,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> listAll(@RequestBody CategoryFilter categoryFilter){
+    public ResponseEntity<List<CategoryResponseDTO>> listAll(@ModelAttribute CategoryFilter categoryFilter){
         return ResponseEntity
                 .status(200)
                 .body(facade.listAll(categoryFilter));
