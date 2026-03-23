@@ -1,4 +1,4 @@
-package com.weg.reenginered.application.mapper;
+package com.weg.reenginered.application.mapper.user;
 
 import com.weg.reenginered.domain.entity.User;
 import com.weg.reenginered.infrastructure.persistence.user.UserJpa;

@@ -1,6 +1,16 @@
 package com.weg.reenginered.domain.dto.filter;
 
-public record CategoryFilter(
-        String name
-) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class CategoryFilter {
+
+    private String name;
+
 }

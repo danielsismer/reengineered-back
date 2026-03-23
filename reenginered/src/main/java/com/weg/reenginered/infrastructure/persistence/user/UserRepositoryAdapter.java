@@ -1,6 +1,6 @@
 package com.weg.reenginered.infrastructure.persistence.user;
 
-import com.weg.reenginered.application.mapper.UserMapper;
+import com.weg.reenginered.application.mapper.user.UserMapper;
 import com.weg.reenginered.domain.dto.filter.UserFilter;
 import com.weg.reenginered.domain.entity.User;
 import com.weg.reenginered.domain.exception.user.UserNotFound;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component

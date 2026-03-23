@@ -1,14 +1,14 @@
-package com.weg.reenginered.application.usecase.user;
+package com.weg.reenginered.application.usecase.category;
 
-import com.weg.reenginered.domain.port.UserPort;
+import com.weg.reenginered.domain.port.CategoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DeleteByIdUseCase {
+public class DeleteCategoryByIdUseCase {
 
-    private final UserPort repository;
+    private final CategoryPort repository;
 
     public void execute(Long id){
         repository.deleteById(id);
