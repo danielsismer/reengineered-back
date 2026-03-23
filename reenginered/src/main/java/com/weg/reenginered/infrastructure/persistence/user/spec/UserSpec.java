@@ -5,7 +5,7 @@ import com.weg.reenginered.domain.entity.User;
 import com.weg.reenginered.infrastructure.persistence.user.UserJpa;
 import org.springframework.data.jpa.domain.Specification;
 
-public class    UserSpec {
+public class UserSpec {
 
     public static Specification<UserJpa> filter(UserFilter userFilter){
         return Specification
