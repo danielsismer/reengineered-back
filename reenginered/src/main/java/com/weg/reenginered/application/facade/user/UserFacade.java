@@ -1,6 +1,6 @@
 package com.weg.reenginered.application.facade.user;
 
-import com.weg.reenginered.application.mapper.UserMapper;
+import com.weg.reenginered.application.mapper.user.UserMapper;
 import com.weg.reenginered.application.usecase.user.*;
 import com.weg.reenginered.domain.dto.filter.UserFilter;
 import com.weg.reenginered.domain.entity.User;
@@ -17,8 +17,8 @@ public class UserFacade implements UserFacadePort {
 
     private final SaveUserUseCase save;
     private final FindByIdUseCase findById;
-    private final FindAllUseCase findAll;
-    private final DeleteByIdUseCase deleteById;
+    private final FindUserUseCase findAll;
+    private final DeleteUserByIdUseCase deleteById;
     private final UpdateUserUseCase update;
     private final UserMapper mapper;
 

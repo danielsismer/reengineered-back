@@ -1,5 +1,7 @@
 package com.weg.reenginered.application.usecase.user;
 
+import com.weg.reenginered.domain.entity.User;
+import com.weg.reenginered.domain.port.UserPort;
 import com.weg.reenginered.application.mapper.UserMapper;
 import com.weg.reenginered.domain.entity.User;
 import com.weg.reenginered.domain.exception.user.UserNotFound;
