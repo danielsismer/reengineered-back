@@ -62,6 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFound.class)
     public ResponseEntity<ErrorResponseDTO> handleUserNotFound(CategoryNotFound ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro interno inesperado no servidor.", null);
