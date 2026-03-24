@@ -8,11 +8,13 @@ import com.weg.reenginered.presentation.dto.request.UserRequestDTO;
 import com.weg.reenginered.presentation.dto.response.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Service
 public class UserFacade implements UserFacadePort {
 
     private final SaveUserUseCase save;

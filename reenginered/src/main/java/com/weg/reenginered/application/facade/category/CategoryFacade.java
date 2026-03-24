@@ -8,11 +8,13 @@ import com.weg.reenginered.presentation.dto.request.CategoryRequestDTO;
 import com.weg.reenginered.presentation.dto.response.CategoryResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Service
 public class CategoryFacade implements CategoryFacadePort{
 
     private final SaveCategoryUseCase save;

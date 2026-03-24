@@ -2,6 +2,7 @@ package com.weg.reenginered.presentation.handler;
 
 
 import com.weg.reenginered.domain.exception.category.CategoryNotFound;
+import com.weg.reenginered.domain.exception.product.ProductNotFound;
 import com.weg.reenginered.domain.exception.user.UserNotFound;
 import com.weg.reenginered.presentation.dto.response.ErrorResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -60,9 +61,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(CategoryNotFound ex) {
+    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(UserNotFound ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
     }
+
+    @ExceptionHandler(ProductNotFound.class)
+    public ResponseEntity<ErrorResponseDTO> handleProductNotFound(CategoryNotFound ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro interno inesperado no servidor.", null);
