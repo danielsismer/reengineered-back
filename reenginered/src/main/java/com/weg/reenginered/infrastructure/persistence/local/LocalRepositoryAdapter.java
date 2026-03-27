@@ -41,8 +41,8 @@ public class LocalRepositoryAdapter implements LocalPort {
         LocalJpa localJpa = repository.findById(id)
                 .orElseThrow( () -> new LocalNotFoundException(id));
 
-        localJpa.setName(localJpa.getName());
-        localJpa.setFloor(localJpa.getFloor());
+        localJpa.setName(local.getName());
+        localJpa.setFloor(local.getFloor());
 
         return mapper.toEntity(repository.save(localJpa));
     }

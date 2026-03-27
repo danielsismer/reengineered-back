@@ -46,7 +46,7 @@ public class LocalController {
     }
 
     @Operation(summary = "Delete Local by id")
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id){
         facade.deleteById(id);
         return ResponseEntity
