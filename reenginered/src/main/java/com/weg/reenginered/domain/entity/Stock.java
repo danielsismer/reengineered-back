@@ -26,6 +26,11 @@ public class Stock {
 
     }
 
+    public Stock(Product product, Local local) {
+        this.product = product;
+        this.local = local;
+    }
+
     public Long getId() {
         return id;
     }
