@@ -14,7 +14,5 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StockFilter {
 
-    private Long productId;
-    private Long localId;
-    private LocalDateTime dateArrivalStart;
+    private LocalDateTime dateArrival;
 }
