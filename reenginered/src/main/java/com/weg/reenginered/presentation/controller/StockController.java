@@ -48,7 +48,7 @@ public class StockController {
     }
 
     @Operation(summary = "Delete Stock by id")
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id){
         facade.deleteById(id);
         return ResponseEntity
@@ -57,7 +57,7 @@ public class StockController {
     }
 
     @Operation(summary = "Update Stock by id")
-    @GetMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<StockResponseDTO> update(@RequestBody @Valid StockRequestDTO stockRequestDTO,
                                                    @PathVariable Long id){
         return ResponseEntity
