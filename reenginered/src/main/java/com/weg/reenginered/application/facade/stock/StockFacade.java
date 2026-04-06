@@ -7,6 +7,7 @@ import com.weg.reenginered.application.usecase.stock.*;
 import com.weg.reenginered.domain.dto.filter.StockFilter;
 import com.weg.reenginered.domain.entity.Local;
 import com.weg.reenginered.domain.entity.Product;
+import com.weg.reenginered.domain.entity.Stock;
 import com.weg.reenginered.domain.exception.local.LocalNotFoundException;
 import com.weg.reenginered.domain.exception.product.ProductNotFound;
 import com.weg.reenginered.infrastructure.persistence.local.LocalJpa;
@@ -21,6 +22,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -51,7 +53,10 @@ public class StockFacade implements StockFacadePort{
         Product productEntity = productMapper.toEntity(product) ;
         Local localEntity = localMapper.toEntity(local);
 
-        return mapper.toResponse(save.execute(mapper.toEntity(productEntity, localEntity)));
+        Stock stockEntity = mapper.toEntity(productEntity, localEntity);
+        stockEntity.setDateArrival(LocalDateTime.now());
+
+        return mapper.toResponse(save.execute(stockEntity));
     }
 
     @Override

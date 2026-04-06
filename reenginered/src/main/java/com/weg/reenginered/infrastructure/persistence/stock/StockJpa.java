@@ -2,6 +2,8 @@ package com.weg.reenginered.infrastructure.persistence.stock;
 
 import com.weg.reenginered.domain.entity.Local;
 import com.weg.reenginered.domain.entity.Product;
+import com.weg.reenginered.infrastructure.persistence.local.LocalJpa;
+import com.weg.reenginered.infrastructure.persistence.product.ProductJpa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,12 +26,12 @@ public class StockJpa {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product product;
+    private ProductJpa product;
 
     @Column(nullable = false)
     private LocalDateTime dateArrival;
 
     @ManyToOne
     @JoinColumn(name = "local_id")
-    private Local local;
+    private LocalJpa local;
 }

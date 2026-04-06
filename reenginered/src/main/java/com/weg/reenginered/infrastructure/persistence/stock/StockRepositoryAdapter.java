@@ -1,5 +1,7 @@
 package com.weg.reenginered.infrastructure.persistence.stock;
 
+import com.weg.reenginered.application.mapper.local.LocalMapper;
+import com.weg.reenginered.application.mapper.product.ProductMapper;
 import com.weg.reenginered.application.mapper.stock.StockMapper;
 import com.weg.reenginered.domain.dto.filter.StockFilter;
 import com.weg.reenginered.domain.entity.Stock;
@@ -7,6 +9,7 @@ import com.weg.reenginered.domain.exception.local.LocalNotFoundException;
 import com.weg.reenginered.domain.exception.stock.StockNotFound;
 import com.weg.reenginered.domain.port.StockPort;
 import com.weg.reenginered.infrastructure.persistence.local.LocalJpa;
+import com.weg.reenginered.infrastructure.persistence.product.ProductJpa;
 import com.weg.reenginered.infrastructure.persistence.stock.spec.StockSpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,6 +22,8 @@ public class StockRepositoryAdapter implements StockPort {
 
     private final StockJpaRepository repository;
     private final StockMapper mapper;
+    private final ProductMapper productMapper;
+    private final LocalMapper localMapper;
 
     @Override
     public List<Stock> findAll(StockFilter stockFilter) {
@@ -45,8 +50,11 @@ public class StockRepositoryAdapter implements StockPort {
         StockJpa stockJpa = repository.findById(id)
                 .orElseThrow( () -> new LocalNotFoundException(id));
 
-        stockJpa.setProduct(stock.getProduct());
-        stockJpa.setLocal(stock.getLocal());
+        ProductJpa productJpa = productMapper.toJpa(stock.getProduct());
+        LocalJpa localJpa = localMapper.toJpa(stock.getLocal());
+
+        stockJpa.setProduct(productJpa);
+        stockJpa.setLocal(localJpa);
 
         return mapper.toEntity(repository.save(stockJpa));
     }
