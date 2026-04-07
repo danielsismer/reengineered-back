@@ -4,10 +4,12 @@ package com.weg.reenginered.presentation.handler;
 import com.weg.reenginered.domain.exception.category.CategoryNotFound;
 import com.weg.reenginered.domain.exception.local.LocalNotFoundException;
 import com.weg.reenginered.domain.exception.product.ProductNotFound;
+import com.weg.reenginered.domain.exception.stock.StockNotFound;
 import com.weg.reenginered.domain.exception.user.UserNotFound;
 import com.weg.reenginered.presentation.dto.response.ErrorResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import com.weg.reenginered.presentation.dto.response.ErrorResponseDTO;
+import org.apache.coyote.Response;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -73,6 +75,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LocalNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleLocalNotFound(LocalNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(StockNotFound.class)
+    public ResponseEntity<ErrorResponseDTO> handleStockNotFound(StockNotFound ex){
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);
     }
 

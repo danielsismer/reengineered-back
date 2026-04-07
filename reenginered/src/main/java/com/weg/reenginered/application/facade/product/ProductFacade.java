@@ -54,6 +54,6 @@ public class ProductFacade implements ProductFacadePort {
 
     @Override
     public void deleteById(Long id) {
-            deleteById.execute(id);
+        deleteById.execute(id);
     }
 }
