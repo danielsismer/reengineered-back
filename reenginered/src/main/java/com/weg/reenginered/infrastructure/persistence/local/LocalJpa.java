@@ -1,10 +1,13 @@
 package com.weg.reenginered.infrastructure.persistence.local;
 
+import com.weg.reenginered.infrastructure.persistence.stock.StockJpa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "local")
@@ -23,4 +26,7 @@ public class LocalJpa {
 
     @Column(nullable = false)
     private Integer floor;
+
+    @OneToMany(mappedBy = "local", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StockJpa> stocks;
 }

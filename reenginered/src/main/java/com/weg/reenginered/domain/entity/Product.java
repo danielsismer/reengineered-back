@@ -1,6 +1,7 @@
 package com.weg.reenginered.domain.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Product {
 
@@ -8,12 +9,14 @@ public class Product {
     private String name;
     private BigDecimal price;
     private Category category;
+    private List<Stock> stocks;
 
-    public Product(Long id, String name, BigDecimal price, Category category) {
+    public Product(Long id, String name, BigDecimal price, Category category, List<Stock> stocks) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
+        this.stocks = stocks;
     }
 
     public Product(String name, BigDecimal price, Category category) {
@@ -54,4 +57,11 @@ public class Product {
         this.category = category;
     }
 
+    public List<Stock> getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(List<Stock> stocks) {
+        this.stocks = stocks;
+    }
 }
