@@ -10,6 +10,8 @@ public record ProductResponseDTO (
         String name,
         BigDecimal price,
         CategoryResponseDTO category,
-        List<Long> stockIds
+        List<Long> stockIds,
+        String urlImage,
+        Integer quantity
 ){
 }

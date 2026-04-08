@@ -37,9 +37,13 @@ public class ProductJpa {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StockJpa> stocks;
 
-    public ProductJpa(String name, BigDecimal price, CategoryJpa category) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-    }
+    @Column(name = "url_image", nullable = false)
+    private String urlImage;
+
+    @Column(nullable = false)
+    private Integer quantity;
+
+    @Column(nullable = false)
+    private String description;
+
 }
