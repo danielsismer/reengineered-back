@@ -10,6 +10,7 @@ public record ProductRequestDTO(
         Long category_id,
         String urlImage,
         Integer quantity,
-        String description
+        String description,
+        Long stockId
 ) {
 }

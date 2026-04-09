@@ -9,17 +9,17 @@ public class Product {
     private String name;
     private BigDecimal price;
     private Category category;
-    private List<Stock> stocks;
+    private Stock stock;
     private String urlImage;
     private Integer quantity;
     private String description;
 
-    public Product(Long id, String name, BigDecimal price, Category category, List<Stock> stocks, String urlImage, Integer quantity, String description) {
+    public Product(Long id, String name, BigDecimal price, Category category, Stock stock, String urlImage, Integer quantity, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
-        this.stocks = stocks;
+        this.stock = stock;
         this.urlImage = urlImage;
         this.quantity = quantity;
         this.description = description;
@@ -66,12 +66,12 @@ public class Product {
         this.category = category;
     }
 
-    public List<Stock> getStocks() {
-        return stocks;
+    public Stock getStocks() {
+        return stock;
     }
 
-    public void setStocks(List<Stock> stocks) {
-        this.stocks = stocks;
+    public void setStocks(Stock stocks) {
+        this.stock = stocks;
     }
 
     public String getUrlImage() {

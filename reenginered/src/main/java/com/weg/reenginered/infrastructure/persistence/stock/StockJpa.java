@@ -24,7 +24,7 @@ public class StockJpa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     private ProductJpa product;
 

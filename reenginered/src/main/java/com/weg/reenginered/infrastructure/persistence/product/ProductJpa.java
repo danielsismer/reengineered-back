@@ -34,8 +34,9 @@ public class ProductJpa {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpa category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StockJpa> stocks;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stock_id", nullable = false)
+    private StockJpa stock;
 
     @Column(name = "url_image", nullable = false)
     private String urlImage;
@@ -46,11 +47,11 @@ public class ProductJpa {
     @Column(nullable = false)
     private String description;
 
-    public ProductJpa(String name, BigDecimal price, CategoryJpa category, List<StockJpa> stocks, String urlImage, Integer quantity, String description) {
+    public ProductJpa(String name, BigDecimal price, CategoryJpa category, StockJpa stock, String urlImage, Integer quantity, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
-        this.stocks = stocks;
+        this.stock = stock;
         this.urlImage = urlImage;
         this.quantity = quantity;
         this.description = description;
