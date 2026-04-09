@@ -12,6 +12,7 @@ public record ProductResponseDTO (
         CategoryResponseDTO category,
         List<Long> stockIds,
         String urlImage,
-        Integer quantity
+        Integer quantity,
+        String description
 ){
 }

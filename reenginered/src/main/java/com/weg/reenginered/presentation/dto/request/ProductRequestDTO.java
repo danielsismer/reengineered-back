@@ -9,6 +9,7 @@ public record ProductRequestDTO(
         BigDecimal price,
         Long category_id,
         String urlImage,
-        Integer quantity
+        Integer quantity,
+        String description
 ) {
 }

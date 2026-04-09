@@ -46,4 +46,13 @@ public class ProductJpa {
     @Column(nullable = false)
     private String description;
 
+    public ProductJpa(String name, BigDecimal price, CategoryJpa category, List<StockJpa> stocks, String urlImage, Integer quantity, String description) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.stocks = stocks;
+        this.urlImage = urlImage;
+        this.quantity = quantity;
+        this.description = description;
+    }
 }

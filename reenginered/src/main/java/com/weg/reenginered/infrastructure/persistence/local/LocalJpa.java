@@ -29,4 +29,6 @@ public class LocalJpa {
 
     @OneToMany(mappedBy = "local", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StockJpa> stocks;
+
+
 }

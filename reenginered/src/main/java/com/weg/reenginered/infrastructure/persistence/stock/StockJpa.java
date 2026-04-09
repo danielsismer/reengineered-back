@@ -34,4 +34,6 @@ public class StockJpa {
     @ManyToOne
     @JoinColumn(name = "local_id")
     private LocalJpa local;
+
+
 }

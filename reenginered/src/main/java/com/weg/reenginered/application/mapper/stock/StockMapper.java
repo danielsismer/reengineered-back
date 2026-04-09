@@ -16,18 +16,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StockMapper {
 
-    private final ProductMapper productMapper;
-    private final LocalMapper localMapper;
     public Stock toEntity(Product product, Local local){
         return new Stock(
                 product,
                 local);
     }
 
-    public Stock toEntity(StockJpa stockJpa){
-
-        Product product = productMapper.toEntity(stockJpa.getProduct());
-        Local local = localMapper.toEntity(stockJpa.getLocal());
+    public Stock toEntity(StockJpa stockJpa, Product product, Local local){
 
         return new Stock(
                 stockJpa.getId(),
@@ -46,15 +41,13 @@ public class StockMapper {
         );
     }
 
-    public StockJpa toJpa(Stock stock){
-        ProductJpa product = productMapper.toJpa(stock.getProduct());
-        LocalJpa local = localMapper.toJpa(stock.getLocal());
+    public StockJpa toJpa(Stock stock, ProductJpa productJpa, LocalJpa localJpa){
 
         return new StockJpa(
                 stock.getId(),
-                product,
+                productJpa,
                 stock.getDateArrival(),
-                local
+                localJpa
         );
     }
 }
