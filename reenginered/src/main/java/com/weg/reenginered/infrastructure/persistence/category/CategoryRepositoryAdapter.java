@@ -8,6 +8,7 @@ import com.weg.reenginered.domain.entity.Product;
 import com.weg.reenginered.domain.exception.category.CategoryNotFound;
 import com.weg.reenginered.domain.port.CategoryPort;
 import com.weg.reenginered.infrastructure.persistence.category.spec.CategorySpec;
+import com.weg.reenginered.infrastructure.persistence.product.ProductJpa;
 import com.weg.reenginered.infrastructure.persistence.product.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ public class CategoryRepositoryAdapter implements CategoryPort {
 
     private final CategoryJpaRepository repository;
     private final CategoryMapper categoryMapper;
-    private final ProductJpaRepository productRepository;
     private final ProductMapper productMapper;
 
     @Override
@@ -32,15 +32,20 @@ public class CategoryRepositoryAdapter implements CategoryPort {
     @Override
     public Category listById(Long id) {
         return repository.findById(id)
-                .map(categoryMapper::toEntity)
+                .map(
+                        categoryJpa -> categoryMapper.toEntity(categoryJpa,
+                                categoryJpa.getProducts().stream().map(productMapper::toEntity).toList())
+                )
                 .orElseThrow(() -> new CategoryNotFound(id));
+
     }
 
     @Override
     public List<Category> listAll(CategoryFilter categoryFilter) {
         return repository.findAll(CategorySpec.filterAll(categoryFilter))
                 .stream()
-                .map(categoryMapper::toEntity)
+                .map( categoryJpa -> categoryMapper.toEntity(categoryJpa, categoryJpa.getProducts().stream().map(productMapper::toEntity).toList())
+                )
                 .toList();
 
     }
@@ -53,7 +58,7 @@ public class CategoryRepositoryAdapter implements CategoryPort {
 
         categoryJpa.setName(category.getName());
 
-        return categoryMapper.toEntity(repository.save(categoryJpa));
+        return categoryMapper.toEntity(repository.save(categoryJpa), categoryJpa.getProducts().stream().map(productMapper::toEntity).toList());
 
     }
 
