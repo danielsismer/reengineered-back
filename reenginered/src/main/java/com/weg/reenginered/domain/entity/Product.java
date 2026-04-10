@@ -22,10 +22,9 @@ public class Product {
         this.description = description;
     }
 
-    public Product(String name, BigDecimal price, Category category, String urlImage, Integer quantity, String description) {
+    public Product(String name, BigDecimal price, String urlImage, Integer quantity, String description) {
         this.name = name;
         this.price = price;
-        this.category = category;
         this.urlImage = urlImage;
         this.quantity = quantity;
         this.description = description;

@@ -1,8 +1,11 @@
 package com.weg.reenginered.infrastructure.persistence.product;
 
+import com.weg.reenginered.application.mapper.category.CategoryMapper;
 import com.weg.reenginered.application.mapper.product.ProductMapper;
 import com.weg.reenginered.domain.dto.filter.ProductFilter;
+import com.weg.reenginered.domain.entity.Category;
 import com.weg.reenginered.domain.entity.Product;
+import com.weg.reenginered.domain.exception.category.CategoryNotFound;
 import com.weg.reenginered.domain.exception.product.ProductNotFound;
 import com.weg.reenginered.domain.port.ProductPort;
 import com.weg.reenginered.infrastructure.persistence.category.CategoryJpa;
@@ -20,29 +23,47 @@ public class ProductRepositoryAdapter implements ProductPort {
     private final ProductMapper mapper;
     private final ProductJpaRepository repository;
     private final CategoryJpaRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public List<Product> findAll(ProductFilter productFilter) {
         return repository.findAll(ProductSpec.filter(productFilter))
                 .stream()
-                .map(mapper::toEntity)
+                .map(
+                        productJpa -> {
+                            Product product = mapper.toEntity(productJpa);
+                            Category category = categoryMapper.toEntity(productJpa.getCategory());
+                            product.setId(productJpa.getId());
+                            product.setCategory(category);
+                            return product;
+                        }
+                )
                 .toList();
     }
 
     @Override
     public Product findById(Long id) {
-        return mapper.toEntity(repository.findById(id)
-                .orElseThrow(() -> new ProductNotFound(id)));
+
+        ProductJpa productJpa = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFound(id));
+
+        Product productGenerated = mapper.toEntity(productJpa);
+        productGenerated.setCategory(categoryMapper.toEntity(productJpa.getCategory()));
+        productGenerated.setId(productJpa.getId());
+
+        return productGenerated;
     }
 
     @Override
     public Product save(Product product) {
         ProductJpa productJpa = mapper.toJpa(product);
-        CategoryJpa categoryRef = categoryRepository.getReferenceById(product.getCategory().getId());
+        CategoryJpa categoryRef = categoryRepository.findById(product.getCategory().getId())
+                .orElseThrow(() -> new CategoryNotFound(product.getCategory().getId()));
         productJpa.setCategory(categoryRef);
 
-        ProductJpa saved = repository.save(productJpa);
-        return mapper.toEntity(saved);
+        Product productSaved = mapper.toEntity(repository.save(productJpa));
+        productSaved.setCategory(categoryMapper.toEntity(categoryRef));
+        return productSaved;
     }
 
     @Override
@@ -56,8 +77,18 @@ public class ProductRepositoryAdapter implements ProductPort {
         productJpa.setName(product.getName());
         productJpa.setPrice(product.getPrice());
         productJpa.setCategory(categoryRef);
+        productJpa.setUrlImage(product.getUrlImage());
+        productJpa.setQuantity(product.getQuantity());
+        productJpa.setDescription(product.getDescription());
 
-        return mapper.toEntity(repository.save(productJpa));
+        ProductJpa productSaved = repository.save(productJpa);
+        Product productGenerated = mapper.toEntity(productJpa);
+
+        productGenerated.setCategory(
+                categoryMapper.toEntity(productSaved.getCategory()));
+        productGenerated.setId(productSaved.getId());
+
+        return productGenerated;
     }
 
     @Override

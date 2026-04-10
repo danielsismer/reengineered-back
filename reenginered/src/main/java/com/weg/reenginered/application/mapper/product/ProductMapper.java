@@ -16,11 +16,11 @@ public class ProductMapper {
 
     private final CategoryMapper categoryMapper;
 
-    public Product toEntity(ProductRequestDTO productRequestDTO, Category category) {
+    public Product toEntity(ProductRequestDTO productRequestDTO) {
+
         return new Product(
                 productRequestDTO.name(),
                 productRequestDTO.price(),
-                null,
                 productRequestDTO.urlImage(),
                 productRequestDTO.quantity(),
                 productRequestDTO.description()
@@ -31,7 +31,6 @@ public class ProductMapper {
         return new Product(
                 productJpa.getName(),
                 productJpa.getPrice(),
-                null,
                 productJpa.getUrlImage(),
                 productJpa.getQuantity(),
                 productJpa.getDescription()
@@ -43,7 +42,7 @@ public class ProductMapper {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                null,
+                categoryMapper.toResponse(product.getCategory()),
                 product.getUrlImage(),
                 product.getQuantity(),
                 product.getDescription()
@@ -55,7 +54,6 @@ public class ProductMapper {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                null,
                 product.getUrlImage(),
                 product.getQuantity(),
                 product.getDescription()

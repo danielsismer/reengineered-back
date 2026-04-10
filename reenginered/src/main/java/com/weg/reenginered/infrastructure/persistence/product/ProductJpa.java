@@ -41,11 +41,10 @@ public class ProductJpa {
     @Column(nullable = false)
     private String description;
 
-    public ProductJpa(Long id, String name, BigDecimal price, CategoryJpa category, String urlImage, Integer quantity, String description) {
+    public ProductJpa(Long id, String name, BigDecimal price, String urlImage, Integer quantity, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.category = category;
         this.urlImage = urlImage;
         this.quantity = quantity;
         this.description = description;
