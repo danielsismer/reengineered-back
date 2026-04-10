@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 public record ProductRequestDTO(
         String name,
         BigDecimal price,
-        Long category_id
+        Long category_id,
+        String urlImage,
+        Integer quantity,
+        String description
 ) {
 }
