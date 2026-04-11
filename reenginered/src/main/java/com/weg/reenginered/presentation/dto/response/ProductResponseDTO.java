@@ -8,6 +8,9 @@ public record ProductResponseDTO (
         Long id,
         String name,
         BigDecimal price,
-        CategoryResponseDTO category
+        CategoryResponseDTO category,
+        String urlImage,
+        Integer quantity,
+        String description
 ){
 }

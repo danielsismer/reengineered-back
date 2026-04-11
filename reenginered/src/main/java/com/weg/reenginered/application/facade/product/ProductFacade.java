@@ -5,6 +5,7 @@ import com.weg.reenginered.application.usecase.category.FindCategoryByIdUseCase;
 import com.weg.reenginered.application.usecase.product.*;
 import com.weg.reenginered.domain.dto.filter.ProductFilter;
 import com.weg.reenginered.domain.entity.Category;
+import com.weg.reenginered.domain.entity.Product;
 import com.weg.reenginered.presentation.dto.request.ProductRequestDTO;
 import com.weg.reenginered.presentation.dto.response.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,10 @@ public class ProductFacade implements ProductFacadePort {
     @Override
     public ProductResponseDTO save(ProductRequestDTO productRequestDTO) {
         Category category = findCategoryById.execute(productRequestDTO.category_id());
-        return mapper.toResponse(save.execute(mapper.toEntity(productRequestDTO, category)));
+
+        Product product = mapper.toEntity(productRequestDTO);
+        product.setCategory(category);
+        return mapper.toResponse(save.execute(product));
     }
 
     @Override
@@ -49,7 +53,12 @@ public class ProductFacade implements ProductFacadePort {
     @Override
     public ProductResponseDTO update(ProductRequestDTO productRequestDTO, Long id) {
         Category category = findCategoryById.execute(productRequestDTO.category_id());
-        return mapper.toResponse(update.execute(mapper.toEntity(productRequestDTO, category), id));
+        Product product = mapper.toEntity(productRequestDTO);
+
+        product.setCategory(category);
+        product.setId(id);
+
+        return mapper.toResponse(update.execute(product, id));
     }
 
     @Override

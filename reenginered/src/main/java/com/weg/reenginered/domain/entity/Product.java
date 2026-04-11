@@ -8,18 +8,26 @@ public class Product {
     private String name;
     private BigDecimal price;
     private Category category;
+    private String urlImage;
+    private Integer quantity;
+    private String description;
 
-    public Product(Long id, String name, BigDecimal price, Category category) {
+    public Product(Long id, String name, BigDecimal price, Category category, String urlImage, Integer quantity, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
+        this.urlImage = urlImage;
+        this.quantity = quantity;
+        this.description = description;
     }
 
-    public Product(String name, BigDecimal price, Category category) {
+    public Product(String name, BigDecimal price, String urlImage, Integer quantity, String description) {
         this.name = name;
         this.price = price;
-        this.category = category;
+        this.urlImage = urlImage;
+        this.quantity = quantity;
+        this.description = description;
     }
 
     public Long getId() {
@@ -54,4 +62,27 @@ public class Product {
         this.category = category;
     }
 
+    public String getUrlImage() {
+        return urlImage;
+    }
+
+    public void setUrlImage(String urlImage) {
+        this.urlImage = urlImage;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

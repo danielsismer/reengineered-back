@@ -16,20 +16,24 @@ public class ProductMapper {
 
     private final CategoryMapper categoryMapper;
 
-    public Product toEntity(ProductRequestDTO productRequestDTO, Category category) {
+    public Product toEntity(ProductRequestDTO productRequestDTO) {
+
         return new Product(
                 productRequestDTO.name(),
                 productRequestDTO.price(),
-                category
+                productRequestDTO.urlImage(),
+                productRequestDTO.quantity(),
+                productRequestDTO.description()
         );
     }
 
     public Product toEntity(ProductJpa productJpa) {
         return new Product(
-                productJpa.getId(),
                 productJpa.getName(),
                 productJpa.getPrice(),
-                categoryMapper.toEntity(productJpa.getCategory())
+                productJpa.getUrlImage(),
+                productJpa.getQuantity(),
+                productJpa.getDescription()
         );
     }
 
@@ -38,15 +42,21 @@ public class ProductMapper {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                categoryMapper.toResponse(product.getCategory())
+                categoryMapper.toResponse(product.getCategory()),
+                product.getUrlImage(),
+                product.getQuantity(),
+                product.getDescription()
         );
     }
 
     public ProductJpa toJpa(Product product) {
         return new ProductJpa(
+                product.getId(),
                 product.getName(),
                 product.getPrice(),
-                null
+                product.getUrlImage(),
+                product.getQuantity(),
+                product.getDescription()
         );
     }
 }
