@@ -15,8 +15,8 @@
 <br/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Clean Architecture](https://img.shields.io/badge/Clean-Architecture-orange?style=for-the-badge)](#arquitetura)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](CONTRIBUTING.md)
 
@@ -30,7 +30,7 @@
 
 O **reengineered-back** nasceu de uma pergunta simples: *e se reescrevêssemos uma aplicação de loja de frutas do zero, desta vez do jeito certo?*
 
-O resultado é uma API backend construída com **lógica assíncrona otimizada**, **operações CRUD robustas** e uma arquitetura que separa responsabilidades com precisão cirúrgica — combinando **Clean Architecture**, **Arquitetura Hexagonal (Ports & Adapters)** e os princípios **SOLID** em uma base que escala, que testa bem e que você vai querer mostrar para os outros.
+O resultado é uma API backend construída com **lógica de negócio robusta**, **operações CRUD performáticas** e uma arquitetura que separa responsabilidades com precisão cirúrgica — combinando **Clean Architecture**, **Arquitetura Hexagonal (Ports & Adapters)** e os princípios **SOLID** em uma base que escala, que testa bem e que você vai querer mostrar para os outros.
 
 ---
 
@@ -83,7 +83,7 @@ A Arquitetura Limpa de Uncle Bob garante que as **regras de negócio sejam indep
 ```
          ┌───────────────────────────┐
          │      Frameworks &         │
-         │   Drivers (Express, ORM)  │  ← Camada mais externa
+         │   Drivers (Spring, JPA)   │  ← Camada mais externa
          │  ┌─────────────────────┐  │
          │  │   Interface Adapters│  │  ← Controllers, Gateways
          │  │  ┌───────────────┐  │  │
@@ -101,10 +101,10 @@ A Arquitetura Limpa de Uncle Bob garante que as **regras de negócio sejam indep
 
 | Camada            | O que vive aqui                              |
 |-------------------|----------------------------------------------|
-| `domain/`         | `Fruit`, `FruitId`, regras de negócio puras  |
-| `application/`    | `CreateFruitUseCase`, `GetFruitsUseCase`...  |
-| `adapters/`       | Controllers HTTP, Repository Implementations |
-| `infrastructure/` | ORM, DB config, Express setup, DI Container  |
+| `domain/`         | `Product`, `Stock`, regras de negócio puras|
+| `application/`    | `SaveProductUseCase`, `FindStockUseCase`... |
+| `presentation/`    | Controllers REST, DTOs de entrada         |
+| `infrastructure/` | Spring Boot, JPA, Hibernate, Docker |
 
 ---
 
@@ -158,216 +158,153 @@ Criada por Alistair Cockburn, a arquitetura hexagonal trata a aplicação como u
 
 ### 🟡 SOLID na Prática
 
-Não como teoria de livro. Cada princípio aplicado com exemplo concreto desta codebase:
+Não como teoria de livro. Cada princípio aplicado com exemplos reais comparando o código legado (`legacy`) com a nova arquitetura (`reengineered`):
 
-#### **S — Single Responsibility Principle**
-> *Cada classe tem uma única razão para mudar.*
+#### **S — Single Responsibility Principle (Princípio da Responsabilidade Única)**
+> *Uma classe deve ter um, e apenas um, motivo para mudar.*
 
-```typescript
-// ❌ Errado: Controller fazendo tudo
-class FruitController {
-  async create(req, res) {
-    const fruit = new Fruit(req.body); // regra de negócio
-    await db.query('INSERT ...');       // persistência
-    res.json(fruit);                    // apresentação
-  }
+*   **❌ Errado (`legacy`):** A classe `Estoque` gerenciava a lista de produtos, processava a lógica de menus, lidava com entrada/saída de dados e chamava métodos da View.
+*   **✅ Correto (`reengineered`):** Responsabilidades divididas. O `SaveStockUseCase` apenas salva o estoque, enquanto o `StockController` cuida da entrada HTTP e o `StockPort` da abstração de persistência.
+
+```java
+// ❌ Errado: Estoque faz tudo (Lógica + UI + Coleção)
+public class Estoque {
+    public void gerenciarEstoque(int opcao, Atendente atendente, ...) {
+        switch (opcao) {
+            case 1 -> { 
+                produto = atendente.escolhaCadastrar(produto);
+                estoqueProdutos.add(produto); 
+            }
+        }
+    }
 }
 
-// ✅ Correto: Cada classe com sua responsabilidade
-class CreateFruitController {
-  constructor(private readonly useCase: CreateFruitUseCase) {}
+// ✅ Correto: Caso de uso com responsabilidade única
+@Component
+public class SaveStockUseCase {
+    private final StockPort repository;
 
-  async handle(req: Request, res: Response): Promise<void> {
-    const output = await this.useCase.execute(req.body);
-    res.status(201).json(output);
-  }
+    public Stock execute(Stock stock) { 
+        return repository.save(stock); 
+    }
 }
 ```
 
 ---
 
-#### **O — Open/Closed Principle**
-> *Aberto para extensão, fechado para modificação.*
+#### **O — Open/Closed Principle (Princípio Aberto/Fechado)**
+> *Objetos ou entidades devem estar abertos para extensão, mas fechados para modificação.*
 
-```typescript
-// A interface (Port) é estável. Novos adaptadores não mudam o Use Case.
-interface IFruitRepository {
-  findAll(): Promise<Fruit[]>;
-  findById(id: FruitId): Promise<Fruit | null>;
-  save(fruit: Fruit): Promise<void>;
-  delete(id: FruitId): Promise<void>;
+*   **❌ Errado (`legacy`):** Para adicionar uma nova funcionalidade (ex: um novo tipo de listagem), era necessário modificar o `switch/case` central na classe `Estoque`.
+*   **✅ Correto (`reengineered`):** Novas funcionalidades são adicionadas criando novos Use Cases ou implementando novas interfaces, sem alterar o código core existente.
+
+---
+
+#### **L — Liskov Substitution Principle (Princípio da Substituição de Liskov)**
+> *Uma classe derivada deve ser substituível por sua classe base.*
+
+*   **❌ Errado (`legacy`):** Uso massivo de `instanceof` para verificar se um `Produto` era `Fruta` ou `Verdura`, quebrando a polimorfia e o princípio de substituição.
+*   **✅ Correto (`reengineered`):** Uso de composição e tipos genéricos. A entidade `Product` possui uma `Category`, permitindo que qualquer produto seja tratado de forma uniforme pelo domínio.
+
+```java
+// ❌ Errado: Verificação manual de tipos (instanceof)
+for (Produto p : estoqueProdutos) {
+    if (p instanceof Fruta f) {
+        atendente.listarProduto(f, cont);
+    }
 }
 
-// Posso adicionar um RedisRepository sem tocar em CreateFruitUseCase
-class FruitRepositoryRedis implements IFruitRepository { ... }
-class FruitRepositoryPostgres implements IFruitRepository { ... }
-class FruitRepositoryInMemory implements IFruitRepository { ... }
+// ✅ Correto: Domínio uniforme e polimórfico
+public class Product {
+    private Category category; // Composição em vez de herança forçada
+    // Métodos agem sobre o Produto independente do tipo
+}
 ```
 
 ---
 
-#### **L — Liskov Substitution Principle**
-> *Subtipos devem ser substituíveis por seus tipos base.*
+#### **I — Interface Segregation Principle (Princípio da Segregação de Interface)**
+> *Uma classe não deve ser forçada a depender de métodos que não utiliza.*
 
-```typescript
-// Qualquer implementação de IFruitRepository pode ser injetada
-// no Use Case sem quebrar o comportamento esperado
-const useCase = new CreateFruitUseCase(new FruitRepositoryInMemory());
-const useCase = new CreateFruitUseCase(new FruitRepositoryPostgres(db));
-// Ambos funcionam identicamente do ponto de vista do Use Case
-```
+*   **❌ Errado (`legacy`):** A classe `Atendente` (View) funcionava como uma "Interface Gorda", misturando cadastros de diferentes tipos, exclusões e menus em um único lugar.
+*   **✅ Correto (`reengineered`):** Interfaces (Ports) específicas para cada domínio (`StockPort`, `ProductPort`, `UserPort`), garantindo que cada adaptador implemente apenas o necessário.
 
 ---
 
-#### **I — Interface Segregation Principle**
-> *Clientes não devem depender de interfaces que não usam.*
+#### **D — Dependency Inversion Principle (Princípio da Inversão de Dependência)**
+> *Dependa de abstrações e não de implementações.*
 
-```typescript
-// ❌ Interface gorda
-interface IRepository {
-  findAll(): Promise<Fruit[]>;
-  findById(id: string): Promise<Fruit | null>;
-  save(fruit: Fruit): Promise<void>;
-  delete(id: string): Promise<void>;
-  aggregate(): Promise<Stats>;      // Nem todo adapter precisa disso
-  exportToCsv(): Promise<string>;   // Nem todo adapter precisa disso
+*   **❌ Errado (`legacy`):** Acoplamento direto com implementações concretas (ex: `ArrayList` direto no campo, dependência direta da classe `Atendente`).
+*   **✅ Correto (`reengineered`):** O Use Case depende da interface `StockPort`. Não importa se a persistência é em JPA, MongoDB ou em memória, o core não muda.
+
+```java
+// ✅ Correto: Dependendo da abstração (Port)
+public class SaveStockUseCase {
+    private final StockPort repository; // Interface, não implementação concreta (JPA)
+
+    public SaveStockUseCase(StockPort repository) {
+        this.repository = repository;
+    }
 }
-
-// ✅ Interfaces segregadas
-interface IFruitReader { findAll(): Promise<Fruit[]>; findById(id: FruitId): Promise<Fruit | null>; }
-interface IFruitWriter { save(fruit: Fruit): Promise<void>; }
-interface IFruitDeleter { delete(id: FruitId): Promise<void>; }
-interface IFruitRepository extends IFruitReader, IFruitWriter, IFruitDeleter {}
 ```
 
 ---
-
-#### **D — Dependency Inversion Principle**
-> *Dependa de abstrações, não de implementações concretas.*
-
-```typescript
-// ✅ Use Case depende da abstração (Port), não da implementação concreta
-class CreateFruitUseCase {
-  constructor(
-    private readonly fruitRepository: IFruitRepository, // ← interface
-  ) {}
-
-  async execute(dto: CreateFruitDTO): Promise<CreateFruitOutput> {
-    const fruit = Fruit.create(dto.name, dto.price, dto.stock);
-    await this.fruitRepository.save(fruit);
-    return FruitMapper.toOutput(fruit);
-  }
-}
-```
-
-O container de DI (Injeção de Dependência) cuida de conectar as abstrações às implementações concretas em tempo de execução.
 
 ---
 
 ## 📁 Estrutura de Pastas
 
 ```
-reengineered-back/
+reenginered/
 │
-├── src/
-│   ├── domain/                        # 🏆 Núcleo — zero dependências externas
-│   │   ├── entities/
-│   │   │   └── Fruit.ts               # Entidade rica com regras de negócio
-│   │   ├── value-objects/
-│   │   │   ├── FruitId.ts             # ID tipado, imutável
-│   │   │   ├── FruitName.ts           # Valida e encapsula o nome
-│   │   │   └── FruitPrice.ts          # Garante preço > 0
-│   │   └── repositories/
-│   │       └── IFruitRepository.ts    # Port: contrato de persistência
+├── src/main/java/com/weg/reenginered/
+│   ├── domain/                        # 🏆 Núcleo — Regras de negócio puras
+│   │   ├── entity/                    # Entidades (Product, Stock, Category)
+│   │   ├── port/                      # Interfaces (Ports) para persistência
+│   │   └── exception/                 # Exceções de domínio
 │   │
-│   ├── application/                   # 🎯 Casos de Uso — orquestra o domínio
-│   │   ├── use-cases/
-│   │   │   ├── CreateFruitUseCase.ts
-│   │   │   ├── GetFruitsUseCase.ts
-│   │   │   ├── UpdateFruitUseCase.ts
-│   │   │   └── DeleteFruitUseCase.ts
-│   │   └── dtos/
-│   │       ├── CreateFruitDTO.ts
-│   │       └── UpdateFruitDTO.ts
+│   ├── application/                   # 🎯 Casos de Uso — Orquestração
+│   │   ├── usecase/                   # Lógica específica (SaveProduct, FindStock)
+│   │   ├── facade/                    # Fachadas para simplificar chamadas
+│   │   └── mapper/                    # Conversão DTO/Entity/JPA
 │   │
-│   ├── adapters/                      # 🔌 Adapters — conectam o mundo ao domínio
-│   │   ├── http/
-│   │   │   ├── controllers/
-│   │   │   │   └── FruitController.ts
-│   │   │   └── routes/
-│   │   │       └── fruit.routes.ts
-│   │   └── repositories/
-│   │       ├── FruitRepositoryPostgres.ts    # Driven Adapter (DB real)
-│   │       └── FruitRepositoryInMemory.ts    # Driven Adapter (testes)
+│   ├── presentation/                  # 🔌 Entrada (Driving Adapters)
+│   │   └── controller/                # Endpoints REST
 │   │
-│   └── infrastructure/                # ⚙️ Config, DI, Framework bootstrap
-│       ├── database/
-│       │   └── connection.ts
-│       ├── container/
-│       │   └── index.ts               # Injeção de Dependência
-│       └── server.ts
+│   └── infrastructure/                # ⚙️ Implementação (Driven Adapters)
+│       ├── persistence/               # Implementação JPA e Adapters de Repositório
+│       └── config/                    # Configurações do Spring
 │
-├── tests/
-│   ├── unit/                          # Testam entidades e use cases isolados
-│   └── integration/                   # Testam adapters com DB real
-│
-├── .env.example
-├── docker-compose.yml
-├── package.json
-└── tsconfig.json
+├── pom.xml                            # Dependências do Maven
+└── docker-compose.yml                 # Infraestrutura (DB)
 ```
 
 ---
 
-## ⚡ Async-First: CRUD Robusto
-
-Todas as operações são **100% assíncronas**, evitando blocking I/O e garantindo throughput máximo.
-
-```typescript
-// Exemplo: GetFruitsUseCase com paginação assíncrona
-export class GetFruitsUseCase {
-  constructor(private readonly repo: IFruitRepository) {}
-
-  async execute(query: GetFruitsQuery): Promise<PaginatedOutput<FruitOutput>> {
-    const [fruits, total] = await Promise.all([
-      this.repo.findAll({ page: query.page, limit: query.limit }),
-      this.repo.count(),
-    ]);
-
-    return {
-      data: fruits.map(FruitMapper.toOutput),
-      total,
-      page: query.page,
-      totalPages: Math.ceil(total / query.limit),
-    };
-  }
-}
-```
-
-Uso de `Promise.all` onde operações são independentes, evitando waterfalls desnecessários.
-
----
 
 ## 🔌 Endpoints da API
 
 | Método   | Rota               | Descrição                     |
 |----------|--------------------|-------------------------------|
-| `GET`    | `/fruits`          | Lista todas as frutas (paginado) |
-| `GET`    | `/fruits/:id`      | Busca uma fruta por ID        |
-| `POST`   | `/fruits`          | Cria uma nova fruta           |
-| `PUT`    | `/fruits/:id`      | Atualiza uma fruta existente  |
-| `DELETE` | `/fruits/:id`      | Remove uma fruta              |
+| `GET`    | `/product`         | Lista todos os produtos       |
+| `GET`    | `/product/:id`     | Busca um produto por ID       |
+| `POST`   | `/product`         | Cria um novo produto          |
+| `PUT`    | `/product/:id`     | Atualiza um produto existente |
+| `DELETE` | `/product/:id`     | Remove um produto             |
 
 ### Exemplo de Request/Response
 
 ```bash
-POST /fruits
+POST /product
 Content-Type: application/json
 
 {
   "name": "Manga Palmer",
   "price": 4.99,
-  "stock": 150
+  "quantity": 150,
+  "description": "Manga Palmer madura e suculenta",
+  "urlImage": "http://link-da-imagem.com",
+  "category": { "id": 1 }
 }
 ```
 
@@ -388,7 +325,8 @@ HTTP/1.1 201 Created
 
 ### Pré-requisitos
 
-- Node.js 18+
+- Java 17+
+- Maven
 - Docker & Docker Compose
 
 ### 1. Clone o repositório
@@ -414,8 +352,8 @@ docker-compose up -d
 ### 4. Instale as dependências e rode
 
 ```bash
-npm install
-npm run dev
+# 4. Rode a aplicação com Maven
+./mvnw spring-boot:run
 ```
 
 A API estará disponível em `http://localhost:3000` 🎉
@@ -428,35 +366,12 @@ A separação de camadas torna os testes **simples, rápidos e confiáveis**.
 
 ```bash
 # Testes unitários (sem banco de dados — usa InMemoryRepository)
-npm run test:unit
-
-# Testes de integração (com banco de dados real via Docker)
-npm run test:integration
-
-# Coverage completo
-npm run test:coverage
+```bash
+# Executar todos os testes
+./mvnw test
 ```
 
-**Por que os testes são rápidos aqui?** Porque os Use Cases são testados com o `FruitRepositoryInMemory`. Nenhuma chamada de banco. Nenhum I/O. Puro TypeScript.
-
-```typescript
-// Teste de Use Case — sem banco, sem mock framework, sem magia negra
-describe('CreateFruitUseCase', () => {
-  it('should create a fruit successfully', async () => {
-    const repo = new FruitRepositoryInMemory();
-    const useCase = new CreateFruitUseCase(repo);
-
-    const output = await useCase.execute({
-      name: 'Banana Prata',
-      price: 2.50,
-      stock: 200,
-    });
-
-    expect(output.name).toBe('Banana Prata');
-    expect(output.price).toBe(2.50);
-  });
-});
-```
+**Por que os testes são confiáveis aqui?** Porque a arquitetura permite testar Use Cases isoladamente de IO, garantindo rapidez e precisão na validação das regras de negócio.
 
 ---
 
@@ -468,7 +383,7 @@ A versão original da aplicação tinha problemas clássicos de código que cres
 |--------------------------------------|-------------------------------------------|
 | Lógica de negócio nos controllers    | Use Cases isolados na camada Application  |
 | Dependência direta do ORM no domínio | Ports & Adapters (IFruitRepository)       |
-| Callbacks aninhados (callback hell)  | Async/Await consistente em toda a base    |
+| Callbacks aninhados (callback hell)  | Java Stream API e clean code            |
 | Classes com múltiplas responsabilidades | SRP: cada classe faz uma coisa           |
 | Dificuldade para testar              | InMemoryRepository para testes rápidos   |
 | Framework acoplado ao negócio        | Domain completamente framework-agnostic  |
@@ -505,7 +420,7 @@ Este projeto está licenciado sob a [MIT License](LICENSE).
 
 <div align="center">
 
-**Feito com 🍊 e boas práticas por [danielsismer](https://github.com/danielsismer)**
+**Feito com 🍊 e boas práticas por [danielsismer](https://github.com/danielsismer) e [hugodeleon](https://github.com/HugoDeleonP)**
 
 *"Código limpo não é sobre ser perfeito. É sobre ser honesto com o próximo dev — que provavelmente será você mesmo."*
 
